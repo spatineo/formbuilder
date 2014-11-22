@@ -1,0 +1,13 @@
+target/
+
+.DS_Store
+**/.DS_Store
+
+.project
+.classpath
+/.settings
+
+src/test/resources/GeoLiteCity.dat
+query.log
+
+/target
