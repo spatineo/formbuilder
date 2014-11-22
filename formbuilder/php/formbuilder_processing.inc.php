@@ -7,57 +7,57 @@
 	function formbuilder_checkPOSTData()
 	{
 		global $wp_query, $_SERVER, $wpdb, $formbuilder_formDisplayArray;
-		
+
 		$formbuilder_formDisplayArray = array();
 
 		$version = get_option('formbuilder_version');
 		if(!$version) return;
-		
+
 		foreach($wp_query->posts as $post)
 		{
-		
+
 			$content = $post->post_content;
-	
+
 			if ($post->post_password != '' AND strpos($content, 'wp-pass.php') !== FALSE) {
 				return $content;
 			}
-	
+
 			// Check to determine whether or not we have a form manually entered into the content of the post
 			// Manual entries in the form of [formbuilder:5] where 5 is the ID of the form to be displayed.
 			$content_form_ids = formbuilder_check_content($content);
-	
+
 			// Go through the content and process the form data for the tag.
 			foreach($content_form_ids as $form_id)
 			{
 				if(!isset($formbuilder_formDisplayArray[$form_id['id']]))
 					$formbuilder_formDisplayArray[$form_id['id']] = formbuilder_process_form($form_id['id']);
 			}
-	
-	
+
+
 			$excerpt = strpos($post->post_content, "<!--more-->");
 			$show = false;
 			if(is_single() OR is_page() OR !$excerpt) $show = true;
-	
+
 			if($show)
 			{
 				$post_id = $post->ID;
-				
+
 				$sql = "SELECT form_id FROM " . FORMBUILDER_TABLE_PAGES . " WHERE post_id = '$post_id';";
 				$results = $wpdb->get_results($sql, ARRAY_A);
-				
+
 				if($results)
 				{
 					$page = $results[0];
-	
+
 					if(!isset($formbuilder_formDisplayArray[$page['form_id']]))
 						$formbuilder_formDisplayArray[$page['form_id']] = formbuilder_process_form($page['form_id']);
 				}
 			}
 		}
-		
+
 	}
-	
-	
+
+
 	/**
 	 * Main action on the_content()
 	 * @param unknown_type $content
@@ -93,24 +93,24 @@
 		if($show)
 		{
 			$post_id = $post->ID;
-			
+
 			$sql = "SELECT form_id FROM " . FORMBUILDER_TABLE_PAGES . " WHERE post_id = '$post_id';";
 			$results = $wpdb->get_results($sql, ARRAY_A);
-			
+
 			if($results)
 			{
 				$page = $results[0];
 
 				$formDisplay = $formbuilder_formDisplayArray[$page['form_id']];
-			
+
 				// Do not show the post content if FORMBUILDER_HIDE_POST_AFTER is true.
 				if(FORMBUILDER_HIDE_POST_AFTER)
 				{
 					if(stripos($formDisplay, '<form') === false)
 						$content = '';
 				}
-				
-				
+
+
 				$content = $content . "$formDisplay\n";
 			}
 		}
@@ -121,13 +121,13 @@
 	function formbuilder_process_form($form_id, $data=false)
 	{
 		global $wpdb;
-		
+
 		if (! defined('SID')) {
 			define('SID', '');
 		}
 
 		$formBuilderTextStrings = formbuilder_load_strings();
-		
+
 		$siteurl = get_option('siteurl');
 		$relative_path = str_replace(ABSOLUTE_PATH, "/", FORMBUILDER_PLUGIN_PATH);
 		//$page_path = $siteurl . $relative_path;
@@ -137,9 +137,9 @@
 		$sql = "SELECT * FROM " . FORMBUILDER_TABLE_FORMS . " WHERE id='$form_id';";
 		$results = $wpdb->get_results($sql, ARRAY_A);
 		if($results) $form = $results[0];
-		
+
 		if(!isset($form) OR !$form) return("");
-		
+
 		// Pass the form through a filter that converts all fields to proper htmlentities.
 		$form = formbuilder_array_htmlentities($form);
 		$allFields = array();
@@ -147,7 +147,7 @@
 		// If no form action is defined, use a blank string.  (indicates standard process)
 		if(!isset($form['action']))
 			$form['action'] = "";
-		
+
 		$module_status = false;
 
 		// Load the Form Action module, if different than the standard.
@@ -162,14 +162,14 @@
 		}
 		else
 			$module_status = true;
-			
+
 		if(!isset($form['action_target'])) $form['action_target'] = "";
 
 		$formID = clean_field_name($form['name']);
 		$formCSSID = "formBuilderCSSID$formID";
 		if(!$form['action_target'] OR $form['action_target'] == "")
 			$form['action_target'] = $_SERVER['REQUEST_URI']. "#$formCSSID";
-		
+
 		$session_id = session_id();
 		$sessName   = session_name();
 
@@ -192,10 +192,9 @@
 				$formTags[] = preg_replace('/[^a-z0-9_-]/isU', '', $r['tag']);
 			}
 			$formTags = implode(' ', $formTags);
-			
+
 			$formDisplay = "";
-			$post_errors = '';
-			
+
 			$formDisplay = apply_filters('formbuilder_prepend_formDisplay', $formDisplay);
 
 			$formDisplayID = "formBuilder{$formID}";
@@ -207,12 +206,11 @@
 
 			$formDisplay = apply_filters('formbuilder_formDisplay_formStart', $formDisplay);
 
-			
 			// Paged form related controls for CSS and Javascript
 			$page_id = 1;
 			$new_page = false;
 			$formDisplay .= "<div id='formbuilder-{$form_id}-page-$page_id'>";
-			
+
 			$formDisplay .= '<script type="text/javascript">
 
 function toggleVis(boxid)
@@ -227,13 +225,13 @@ function toggleVis(boxid)
 	}
 }
 
-function toggleVisOn(boxid) 
+function toggleVisOn(boxid)
 {
 		document.getElementById(boxid).setAttribute("class", "formBuilderHelpTextVisible");
 		document.getElementById(boxid).isVisible = "true";
 }
 
-function toggleVisOff(boxid) 
+function toggleVisOff(boxid)
 {
 		document.getElementById(boxid).setAttribute("class", "formBuilderHelpTextHidden");
 		document.getElementById(boxid).isVisible = "false";
@@ -242,7 +240,7 @@ function toggleVisOff(boxid)
 			</script>';
 
 
-			// The $module_status variable is considered to be an error, if it contains a string.  
+			// The $module_status variable is considered to be an error, if it contains a string.
 			if(is_string($module_status))
 				$formDisplay .= $module_status;
 
@@ -257,13 +255,13 @@ function toggleVisOff(boxid)
 			$submit_button_set = false;
 
 			// Check for duplicate form submissions.
-			if(isset($_POST['formBuilderForm']['FormBuilderID']) 
-			AND $_POST['formBuilderForm']['FormBuilderID'] == $form_id) 
+			if(isset($_POST['formBuilderForm']['FormBuilderID'])
+			AND $_POST['formBuilderForm']['FormBuilderID'] == $form_id)
 			{
-				
+
 				$duplicate_check_hash = $form_id . formbuilder_get_hash();
 				$old_hash = get_option('formBuilder_duplicate_hash');
-				
+
 				if($duplicate_check_hash == $old_hash) {
 					$post_errors = true;
 
@@ -271,7 +269,7 @@ function toggleVisOff(boxid)
 					$tmp_msg .= "\n</div>\n" . $formDisplay;
 
 					$formDisplay = $tmp_msg;
-					
+
 				}
 				else {
 					update_option('formBuilder_duplicate_hash', $duplicate_check_hash);
@@ -284,8 +282,13 @@ function toggleVisOff(boxid)
 			{
 				foreach($related as $field)
 				{
+					//Apply localization filters:
+					$field['field_label'] = apply_filters('the_title',$field['field_label']);
+					$field['error_message'] = apply_filters('the_title',$field['error_message']);
+					$field['help_text'] = apply_filters('the_title',$field['help_text']);
+
 					$error_msg = "";
-					
+
 					$divClass = "control-group formBuilderField " . preg_replace("#[^a-z0-9]#isU", "-", $field['field_type']);
 					$divID = "formBuilderField" . clean_field_name($field['field_name']);
 
@@ -294,7 +297,7 @@ function toggleVisOff(boxid)
 
 					// Define short versions of the more used form variables.
 					$field['name'] = "formBuilderForm[" . $field['field_name'] . "]";
-					
+
 					// If the field type is a checkbox with no predefined field value, give it a field value of "checked".
 					if($field['field_type'] == "checkbox" AND $field['field_value'] == "")
 					{
@@ -304,17 +307,17 @@ function toggleVisOff(boxid)
 					{
 						$field['field_value'] = "checked";
 					}
-					
+
 					// Fill unset POST vars with empty strings.  Not sure what this was used for, but it is now disabled so as not to mess with other plugins that may also check _POST data. (James: Oct. 19, 2011)
 					//if(!isset($_POST['formBuilderForm'][$field['field_name']])) $_POST['formBuilderForm'][$field['field_name']] = "";
-				
-					// Determine what submitted value to give to the field values. 
+
+					// Determine what submitted value to give to the field values.
 					if($field['field_type'] == 'system field')
 					{
 						// Manually assign value to system fields before anything else.
 						$field['value'] = $field['field_value'];
 					}
-					// Determine what submitted value to give to the field values. 
+					// Determine what submitted value to give to the field values.
 					elseif($field['field_type'] == 'wp user id')
 					{
 						// Manually assign value to system fields before anything else.
@@ -358,23 +361,23 @@ function toggleVisOff(boxid)
 					if(isset($_POST['formBuilderForm']['FormBuilderID']) AND $_POST['formBuilderForm']['FormBuilderID'] == $form_id)
 					{
 						$duplicate_check_hash .= md5($field['value']);
-						
+
 						if($field['field_type'] == "spam blocker")
 						{	// Check Spam Blocker for any submitted data.
 							if(trim($field['value']) != "") {
 								$post_errors = true;
 							}
 						}
-						
+
 						elseif($field['field_type'] == "recipient selection")
 						{	// Check to ensure we have been given a valid recipient selection
 							$options = explode("\n", $field['field_value']);
-							
+
 							if(strpos($options[$field['value']], "|") !== false)
 								list($option_value, $option_label) = explode("|", $options[$field['value']], 2);
 							else
 								$option_value = $option_label = $options[$field['value']];
-							
+
 							if(!preg_match('#' . FORMBUILDER_PATTERN_EMAIL . '#isU', $option_value))
 							{
 								$error_msg = $field['error_message'];
@@ -382,14 +385,14 @@ function toggleVisOff(boxid)
 								$missing_post_fields[$divID] = $field['field_label'];
 							}
 						}
-						
+
 						elseif($field['field_type'] == "captcha field" AND function_exists('imagecreate'))
 						{	// Check CAPTCHA to ensure it is correct
 							if( isset($_SESSION['security_code']) AND $_SESSION['security_code'] == $field['value'] && !empty($_SESSION['security_code'] ) ) {
-								// Insert you code for processing the form here, e.g emailing the submission, entering it into a database. 
+								// Insert you code for processing the form here, e.g emailing the submission, entering it into a database.
 								unset($_SESSION['security_code']);
 							} else {
-								if( !isset( $_SERVER['HTTP_COOKIE'] ) ) 
+								if( !isset( $_SERVER['HTTP_COOKIE'] ) )
 								{
 									$post_errors = true;
 									$missing_post_fields[$divID] = $formBuilderTextStrings['captcha_cookie_problem'];
@@ -403,7 +406,7 @@ function toggleVisOff(boxid)
 								}
 							}
 						}
-						
+
 						elseif($field['field_type'] == 'required password')
 						{
 							if($field['value'] != $field['field_value'])
@@ -411,12 +414,12 @@ function toggleVisOff(boxid)
 								$post_errors = true;
 								if(!$field['error_message'])
 									$field['error_message'] = __("The password you entered is incorrect.", 'formbuilder');
-									
+
 								$error_msg = $field['error_message'];
 								$missing_post_fields[$divID] = $field['field_label'];
 							}
 						}
-						
+
 						else
 						{	// Check the values of any other required fields.
 							if(!formbuilder_validate_field($field))
@@ -425,12 +428,12 @@ function toggleVisOff(boxid)
 								$post_errors = true;
 								$missing_post_fields[$divID] = $field['field_label'];
 							}
-							
+
 						}
 					}
-					
-					
-					
+
+
+
 					// Prepopulate fields with user details if available
 					if($field['value'] == "")
 					{
@@ -440,22 +443,22 @@ function toggleVisOff(boxid)
 							// User is logged in.  Prepopulate with data.
 							if(preg_match('#^(yourname|name|your_name|display_name|nickname)$#i', $field['field_name'], $regs))
 								$field['value'] = $wpuser->display_name;
-							
+
 							if(preg_match('#^(firstname|first_name)$#i', $field['field_name'], $regs))
 								$field['value'] = $wpuser->first_name;
-							
+
 							if(preg_match('#^(lastname|last_name)$#i', $field['field_name'], $regs))
 								$field['value'] = $wpuser->last_name;
-							
+
 							if((preg_match('#^(email)$#i', $field['field_name'], $regs)))
 								$field['value'] = $wpuser->user_email;
-							
+
 							if((preg_match('#^(full_name|fullname)$#i', $field['field_name'], $regs)))
 								$field['value'] = trim($wpuser->first_name . " " . $wpuser->last_name);
 						}
 						$wpuser = null;
 					}
-					
+
 
 					// Display any necessary error msgs.
 					if($error_msg) {
@@ -473,7 +476,7 @@ function toggleVisOff(boxid)
 					{
 						$formLabelCSS = "formBuilderLabel control-label";
 					}
-					
+
 					// Determine if we need to show help text.
 					if($field['help_text'])
 					{
@@ -499,7 +502,7 @@ function toggleVisOff(boxid)
 						$formHelpJava = "";
 						$formHelp = "";
 					}
-					
+
 					// Display assorted form fields depending on the type of field.
 					switch($field['field_type'])
 					{
@@ -547,7 +550,7 @@ function toggleVisOff(boxid)
 							$formLabel = "<div class='$formLabelCSS'><label for='field$divID'>" . decode_html_entities($field['field_label'], ENT_NOQUOTES, get_option('blog_charset')) . " </label></div>";
 							$formInput = "<div class='formBuilderInput controls'><input type='checkbox' name='" . $field['name'] . "' id='field$divID' value='" . $field['field_value'] . "' $selected /> <span class='formBuilderCheckboxDescription'>";
 
-							if($field['field_value'] != "checked") 
+							if($field['field_value'] != "checked")
 							{
 								$formInput .= "<label for='field$divID'>"
 								 . decode_html_entities($field['field_value'], ENT_NOQUOTES, get_option('blog_charset'))
@@ -563,7 +566,7 @@ function toggleVisOff(boxid)
 							$formLabel = "<div class='formBuilderLabelRequired'><label for='field$divID'>" . decode_html_entities($field['field_label'], ENT_NOQUOTES, get_option('blog_charset')) . " </label></div>";
 							$formInput = "<div class='formBuilderInput controls'><input type='checkbox' name='" . $field['name'] . "' id='field$divID' value='" . $field['field_value'] . "' $selected /> <span class='formBuilderCheckboxDescription'>";
 
-							if($field['field_value'] != "checked") 
+							if($field['field_value'] != "checked")
 							{
 								$formInput .= "<label for='field$divID'>"
 								 . decode_html_entities($field['field_value'], ENT_NOQUOTES, get_option('blog_charset'))
@@ -610,19 +613,22 @@ function toggleVisOff(boxid)
 								} else {
 									$option_label = $roption;
 								}
-								
+
+								//Localization
+								$option_label = apply_filters('the_title', $option_label);
+
 								$option_label = trim(stripslashes($option_label));
 								$option_label = str_replace("<", "&lt;", $option_label);
 								$option_label = str_replace(">", "&gt;", $option_label);
 
 								// Check to see if the posted data is the same as the value.
-								if(isset($_POST['formBuilderForm'][$field['field_name']]) AND htmlentities(stripslashes($_POST['formBuilderForm'][$field['field_name']]), ENT_QUOTES, get_option('blog_charset')) == $option_value) 
+								if(isset($_POST['formBuilderForm'][$field['field_name']]) AND htmlentities(stripslashes($_POST['formBuilderForm'][$field['field_name']]), ENT_QUOTES, get_option('blog_charset')) == $option_value)
 									$selected = "selected = 'selected'";
-								elseif($field['value'] == $option_value)  
+								elseif($field['value'] == $option_value)
 									$selected = "selected = 'selected'";
-								else 
+								else
 									$selected = "";
-								
+
 								$formInput .= "\n<option value='$option_value' $selected>$option_label</option>";
 							}
 							$formInput .= "\n</select>\n $formHelpJava</div>";
@@ -653,7 +659,7 @@ function toggleVisOff(boxid)
 							$formLabel = "";
 							$formInput = "";
 						break;
-						
+
 						case "recipient selection":
 							$formLabelCSS = "formBuilderLabelRequired";
 							$options = explode("\n", $field['field_value']);
@@ -667,19 +673,19 @@ function toggleVisOff(boxid)
 								} else {
 									$option_label = $roption;
 								}
-								
+
 								$option_label = trim(stripslashes($option_label));
 								$option_label = str_replace("<", "&lt;", $option_label);
 								$option_label = str_replace(">", "&gt;", $option_label);
 
 								// Check to see if the posted data is the same as the value.
-								if(isset($_POST['formBuilderForm'][$field['field_name']]) AND htmlentities(stripslashes($_POST['formBuilderForm'][$field['field_name']]), ENT_QUOTES, get_option('blog_charset')) == $option_value) 
+								if(isset($_POST['formBuilderForm'][$field['field_name']]) AND htmlentities(stripslashes($_POST['formBuilderForm'][$field['field_name']]), ENT_QUOTES, get_option('blog_charset')) == $option_value)
 									$selected = "selected = 'selected'";
-								elseif($field['value'] == $option_value)  
+								elseif($field['value'] == $option_value)
 									$selected = "selected = 'selected'";
-								else 
+								else
 									$selected = "";
-								
+
 								$formInput .= "\n<option value='$option_value' $selected>$option_label</option>";
 							}
 							$formInput .= "\n</select>\n $formHelpJava</div>";
@@ -689,11 +695,11 @@ function toggleVisOff(boxid)
 							$new_page = true;
 							$formLabel = "<div class='$formLabelCSS'>" . decode_html_entities($field['field_label'], ENT_NOQUOTES, get_option('blog_charset')) . " </div>";
 							$formInput = "<div class='formBuilderPageBreak'>";
-							
+
 							$previous_page_insert = "";
 							if($page_id > 1)
 							$previous_page_insert = "<input type='button' name='formbuilder_page_break' value='" . $formBuilderTextStrings['previous'] . "' onclick=" . '"   fb_toggleLayer(\'formbuilder-' . $form_id . '-page-' . $page_id . '\');  fb_toggleLayer(\'formbuilder-' . $form_id . '-page-' . ($page_id - 1) . '\');  "' . " />";
-							
+
 							$formInput .= "$previous_page_insert <input type='button' name='formbuilder_page_break' value='" . $formBuilderTextStrings['next'] . "' onclick=" . '"  fb_toggleLayer(\'formbuilder-' . $form_id . '-page-' . $page_id . '\');  fb_toggleLayer(\'formbuilder-' . $form_id . '-page-' . ($page_id + 1) . '\');  "' . " />" .
 									"</div>";
 
@@ -711,7 +717,7 @@ function toggleVisOff(boxid)
 							$previous_page_insert = "";
 							if($page_id > 1)
 							$previous_page_insert = "<input type='button' name='formbuilder_page_break' value='" . $formBuilderTextStrings['previous'] . "' onclick=" . '"   fb_toggleLayer(\'formbuilder-' . $form_id . '-page-' . $page_id . '\');  fb_toggleLayer(\'formbuilder-' . $form_id . '-page-' . ($page_id - 1) . '\');  "' . " />";
-							
+
 							$formInput = "<div class='formBuilderSubmit controls'>$previous_page_insert<input type='submit' name='" . $field['name'] . "' value='" . decode_html_entities($field['field_label'], ENT_NOQUOTES, get_option('blog_charset')) . "' /> $formHelpJava</div>";
 
 							$submit_button_set = true;
@@ -723,7 +729,7 @@ function toggleVisOff(boxid)
 							$previous_page_insert = "";
 							if($page_id > 1)
 							$previous_page_insert = "<input type='button' name='formbuilder_page_break' value='" . $formBuilderTextStrings['previous'] . "' onclick=" . '"   fb_toggleLayer(\'formbuilder-' . $form_id . '-page-' . $page_id . '\');  fb_toggleLayer(\'formbuilder-' . $form_id . '-page-' . ($page_id - 1) . '\');  "' . " /> $formHelpJava";
-							
+
 							$formInput = "<div class='formBuilderSubmit controls'>$previous_page_insert<input type='image' name='" . $field['name'] . "' src='" . decode_html_entities($field['field_label'], ENT_NOQUOTES, get_option('blog_charset')) . "' value='" . $field['value'] . "' alt='" . $field['value'] . "' /></div>";
 
 							$submit_button_set = true;
@@ -731,7 +737,7 @@ function toggleVisOff(boxid)
 
 						case "datestamp":
 							$formLabel = "<div class='$formLabelCSS'>" . decode_html_entities($field['field_label'], ENT_NOQUOTES, get_option('blog_charset')) . " </div>";
-							if(isset($calendar_loaded) AND $calendar_loaded == true) 
+							if(isset($calendar_loaded) AND $calendar_loaded == true)
 							{
 								$calendar_loading_code = "";
 							}
@@ -746,7 +752,7 @@ function toggleVisOff(boxid)
 								fb_calendar.set(\"field$divID\");
 								</script> $formHelpJava
 							</div>";
-							
+
 							break;
 
 						case "unique id":
@@ -810,15 +816,15 @@ function toggleVisOff(boxid)
 
 
 
-			
-			
+
+
 			$referrer_info = get_option('formBuilder_referrer_info');
 			if($referrer_info == 'Enabled')
 			{
 				// Hidden fields to include referer, and page uri
 				$formDisplay .= "<input type='hidden' name='REFERER' value='" . __('Not Available', 'formbuilder') . "' />";
 				if(isset($_SERVER['HTTP_HOST']) AND isset($_SERVER['REQUEST_URI'])) $formDisplay .= "<input type='hidden' name='PAGE' value='http://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] . "' />";
-				
+
 				// Using JavaScript to populate the referrer field, allows this to work even when pages are served from a cached location on the server.
 				$formDisplay .= "
 				<script type=\"text/javascript\">
@@ -831,7 +837,7 @@ function toggleVisOff(boxid)
 				</script>
 				";
 			}
-			
+
 			// Submit Button
 			if(!$submit_button_set) {
 				$previous_page_insert = "";
@@ -840,22 +846,22 @@ function toggleVisOff(boxid)
 					"value='" . $formBuilderTextStrings['previous'] . "' " .
 					"onclick=" . '"   fb_toggleLayer(\'formbuilder-' . $form_id . '-page-' . $page_id . '\');  ' .
 					'  fb_toggleLayer(\'formbuilder-' . $form_id . '-page-' . ($page_id - 1) . '\');  "' .	" />";
-	
-				$formDisplay .= "\n<div class='formBuilderSubmit form-actions'>$previous_page_insert<input type='submit' name='Submit' value='" . $formBuilderTextStrings['send'] . "' /></div>";
+
+				$formDisplay .= "\n<div class='formBuilderSubmit form-actions'>$previous_page_insert<input type='submit' name='Submit' value='" . apply_filters('the_title',html_entity_decode($formBuilderTextStrings['send'])) . "' /></div>";
 			}
 			else
 				$formDisplay .= "";
 
 			$formDisplay .= "\n</div>\n</form>";	// End of paged CSS
-			
+
 			$formDisplay = apply_filters('formbuilder_append_formDisplay', $formDisplay);
-			
-			
+
+
 			// Check posted form data to ensure that we don't have any blacklisted material
 			$blacklist_enabled = get_option('formbuilder_blacklist');
 			if($blacklist_enabled == "Enabled")
 			{
-				if(isset($_POST['formBuilderForm']['FormBuilderID'])) 
+				if(isset($_POST['formBuilderForm']['FormBuilderID']))
 				{
 					foreach($_POST['formBuilderForm'] as $key=>$value)
 					{
@@ -867,12 +873,12 @@ function toggleVisOff(boxid)
 					}
 				}
 			}
-			
+
 			// Check posted form data to ensure that we don't have any greylisted material
 			$greylist_enabled = get_option('formbuilder_greylist');
 			if($greylist_enabled == "Enabled")
 			{
-				if(isset($_POST['formBuilderForm']['FormBuilderID'])) 
+				if(isset($_POST['formBuilderForm']['FormBuilderID']))
 				{
 					foreach($_POST['formBuilderForm'] as $key=>$value)
 					{
@@ -884,12 +890,12 @@ function toggleVisOff(boxid)
 					}
 				}
 			}
-			
+
 			// Check posted form data to ensure that we don't have any greylisted material
 			$excessive_links_enabled = get_option('formbuilder_excessive_links');
 			if($excessive_links_enabled == "Enabled")
 			{
-				if(isset($_POST['formBuilderForm']['FormBuilderID'])) 
+				if(isset($_POST['formBuilderForm']['FormBuilderID']))
 				{
 					foreach($_POST['formBuilderForm'] as $key=>$value)
 					{
@@ -901,12 +907,12 @@ function toggleVisOff(boxid)
 					}
 				}
 			}
-			
+
 			// Check posted form data to ensure that we don't have any greylisted material
 			$formbuilder_spammer_ip_checking = get_option('formbuilder_spammer_ip_checking');
 			if($formbuilder_spammer_ip_checking == "Enabled")
 			{
-				if(isset($_POST['formBuilderForm']['FormBuilderID'])) 
+				if(isset($_POST['formBuilderForm']['FormBuilderID']))
 				{
 					$response = formbuilder_check_spammer_ip($_SERVER['REMOTE_ADDR']);
 					if($response > 0)
@@ -915,14 +921,14 @@ function toggleVisOff(boxid)
 					}
 				}
 			}
-			
+
 			// Check posted form data for Akismet Spam
 			$akismet_enabled = get_option('formbuilder_akismet');
 			if($akismet_enabled == "Enabled" AND function_exists('akismet_http_post'))
 			{
-				if(isset($_POST['formBuilderForm']['FormBuilderID'])) 
+				if(isset($_POST['formBuilderForm']['FormBuilderID']))
 				{
-					
+
 					if(formbuilder_check_akismet($allFields) == 'true')
 					{
 						$form['subject'] = "POSSIBLE AKISMET SPAM: " . $form['subject'];
@@ -936,23 +942,22 @@ function toggleVisOff(boxid)
 			$extendedForm['allFields'] = $allFields;
 
 			if(isset($_POST['formBuilderForm']['FormBuilderID'])
-			   && $_POST['formBuilderForm']['FormBuilderID'] == $form_id)
+				&& $_POST['formBuilderForm']['FormBuilderID'] == $form_id)
 			{
 				// Final check of fields before marking form as successfully submitted...
 				$extendedForm = apply_filters('formbuilder_submit_final_check', $extendedForm);
 				$post_errors = apply_filters('formbuilder_final_errors_filter', $post_errors);
 			}
 
-			
 			// Process Form Results if necessary
-			if(empty($post_errors)
-			&& isset($_POST['formBuilderForm']['FormBuilderID']) 
+			if(!isset($post_errors)
+			&& isset($_POST['formBuilderForm']['FormBuilderID'])
 			&& $_POST['formBuilderForm']['FormBuilderID'] == $form_id)
 			{
 
 				// Apply filter to fields after successful form submission.
 				$extendedForm = apply_filters('formbuilder_submit_success_pre_value_parsing', $extendedForm);
-			
+
 				// Convert numeric selection values to the real form values
 				// Iterate through the form fields to add values to the email sent to the recipient.
 				foreach($extendedForm['allFields'] as $key=>$field)
@@ -985,7 +990,7 @@ function toggleVisOff(boxid)
 				{
 					$msg = formbuilder_process_db($form, $extendedForm['allFields']);
 				}
-				
+
 				// Check if an alternate form processing system is used.
 				// Otherwise just use the default which sends an email to the recipiant.
 				if($form['action'] != "") {
@@ -999,7 +1004,7 @@ function toggleVisOff(boxid)
 				}
 				else
 					$msg = formbuilder_process_email($form, $extendedForm['allFields']);
-					
+
 				// Check for and process any redirections at this point.
 				if(!$msg) formbuilder_check_redirection($form, $extendedForm['allFields']);
 
@@ -1007,14 +1012,14 @@ function toggleVisOff(boxid)
 				{
 					if(!$msg)
 					{
-						if(!$form['thankyoutext']) $form['thankyoutext'] = "<h4>" 
-							. $formBuilderTextStrings['success'] 
-							. "</h4><p>" 
-							. $formBuilderTextStrings['send_success'] 
+						if(!$form['thankyoutext']) $form['thankyoutext'] = "<h4>"
+							. apply_filters('the_title',$formBuilderTextStrings['success'])
+							. "</h4><p>"
+							. apply_filters('the_title',$formBuilderTextStrings['send_success'])
 							. "</p>";
-						
+
 						// Populate ~variable~ tags in the autoresponse with values submitted by the user.
-						$txtAllFields = ""; 
+						$txtAllFields = "";
 						foreach($extendedForm['allFields'] as $field)
 						{
 							if(
@@ -1032,15 +1037,15 @@ function toggleVisOff(boxid)
 							{
 								$key = $field['field_name'];
 								$value = $field['value'];
-								
+
 								$form['thankyoutext'] = str_replace("~" . $key . "~", $value, $form['thankyoutext']);
 								$txtAllFields .= $key . ": " . $value . "\n";
 							}
 						}
 						$form['thankyoutext'] = str_replace("~FullForm~", nl2br(trim($txtAllFields)), $form['thankyoutext']);
-									
-						$formDisplay = "\n<div class='formBuilderSuccess alert alert-success'>" 
-							. decode_html_entities($form['thankyoutext'], ENT_QUOTES, get_option('blog_charset')) 
+
+						$formDisplay = "\n<div class='formBuilderSuccess alert alert-success'>"
+							. decode_html_entities($form['thankyoutext'], ENT_QUOTES, get_option('blog_charset'))
 							. "</div>";
 					}
 					else
@@ -1052,8 +1057,8 @@ function toggleVisOff(boxid)
 				}
 				else
 				{
-					$formDisplay = "\n<div class='formBuilderSuccess moduleSuccess alert alert-success'>" 
-						. decode_html_entities($form['thankyoutext'], ENT_QUOTES, get_option('blog_charset')) 
+					$formDisplay = "\n<div class='formBuilderSuccess moduleSuccess alert alert-success'>"
+						. decode_html_entities($form['thankyoutext'], ENT_QUOTES, get_option('blog_charset'))
 						. "</div>";
 				}
 			}
@@ -1087,7 +1092,7 @@ function toggleVisOff(boxid)
 		else
 			return($formBuilderTextStrings['display_error']);
 	}
-	
+
 
 	/**
 	 * Process form redirections if necessary.
@@ -1126,36 +1131,36 @@ function toggleVisOff(boxid)
 	{
 		static $last_email_address;
 		$post_errors = false;
-		
-		if($field['field_type'] == 'selection dropdown' 
-			OR $field['field_type'] == 'recipient selection' 
+
+		if($field['field_type'] == 'selection dropdown'
+			OR $field['field_type'] == 'recipient selection'
 			OR $field['field_type'] == 'radio buttons'
 		)
 		{
 			$options = explode("\n", $field['field_value']);
 			$roption = trim($options[$field['value']])	;
-			
+
 			if (strpos($roption, "|") !== FALSE) {
 				list($option_value, $option_label) = explode("|", $roption, 2);
 			} else {
 				$option_label = $option_value = $roption;
 			}
-			
+
 			$field['value'] = trim($option_value);
 		}
-		
+
 		if($field['field_type'] == 'required checkbox')
 		{
 			$field['required_data'] = 'any text';
 		}
 
-		switch($field['required_data']) 
+		switch($field['required_data'])
 		{
 			case "name":
 			case "any text":
 				$pattern = ".+";
 			break;
-	
+
 			case "email address":
 				$pattern = FORMBUILDER_PATTERN_EMAIL;
 				if(preg_match('#' . $pattern . '#isU', $field['value']))
@@ -1164,36 +1169,36 @@ function toggleVisOff(boxid)
 					$_SESSION['formbuilder']['last_email_address'] = $last_email_address;
 				}
 			break;
-	
+
 			case "confirm email":
 				$pattern = FORMBUILDER_PATTERN_EMAIL;
-				if(isset($_SESSION['formbuilder']['last_email_address'])) $last_email_address = $_SESSION['formbuilder']['last_email_address']; 
+				if(isset($_SESSION['formbuilder']['last_email_address'])) $last_email_address = $_SESSION['formbuilder']['last_email_address'];
 				if($field['value'] != $last_email_address)
 				{
 					$post_errors = true;
 				}
 			break;
-	
+
 			case "any number":
 				$pattern = "^[0-9\.-]+$";
 			break;
-			
+
 			case "phone number":
 				$pattern = FORMBUILDER_PATTERN_PHONE;
 			break;
-	
+
 			case "valid url":
 				$pattern = '^\s*(http|https|ftp)://([^:/]+)\.([^:/\.]{2,7})(:\d+)?(/?[^\#\s]+)?(\#(\S*))?\s*$';
 			break;
-			
+
 			case "single word":
 				$pattern = "^\s*[0-9a-z\-]+\s*$";
 			break;
-			
+
 			case "datestamp (dd/mm/yyyy)":
 				$pattern = "^([0-9]{2}/[0-9]{2}/[0-9]{4})|([0-9]{4}\-[0-9]{2}\-[0-9]{2})$";
 			break;
-			
+
 			case "credit card number":
 				$pattern = "^.*$";
 				require_once(FORMBUILDER_PLUGIN_PATH . "php/phpcreditcard.php");
@@ -1201,18 +1206,18 @@ function toggleVisOff(boxid)
 				$errortext= false;
 				$post_errors = !(formbuilder_checkCreditCard($field['value'], '', $errornum, $errortext));
 			break;
-			
+
 			default:
 				$pattern = ".*";
 			break;
 		}
-	
+
 		if(!preg_match("#" . $pattern . "#isU", $field['value']))
 		{
 			$post_errors = true;
 		}
-		
-		
+
+
 		return(!$post_errors);
 	}
 
@@ -1222,11 +1227,11 @@ function toggleVisOff(boxid)
 	function formbuilder_process_db($form, $fields)
 	{
 		global $_POST;
-		
+
 		$formBuilderTextStrings = formbuilder_load_strings();
-		
+
 		$xml_container = "form";
-		
+
 		$xml = '<?xml version="1.0" encoding="' . get_option('blog_charset') . '" ?>';
 		$xml .= "\r\n<$xml_container>";
 
@@ -1267,17 +1272,17 @@ function toggleVisOff(boxid)
 		}
 
 		$xml .= "\r\n</$xml_container>";
-		
+
 		global $wpdb;
-		
+
 		$insertData = array();
 		$insertData['form_id'] = $form['id'];
 		$insertData['timestamp'] = time();
 		$insertData['xmldata'] = addslashes($xml);
-		
+
 		$result = $wpdb->insert(FORMBUILDER_TABLE_RESULTS, $insertData);
-		
-		if($result === false) 
+
+		if($result === false)
 			return($formBuilderTextStrings['storage_error']);
 	}
 
@@ -1288,7 +1293,7 @@ function toggleVisOff(boxid)
 		global $_POST, $wpdb;
 
 		$formBuilderTextStrings = formbuilder_load_strings();
-		
+
                 $email_sub = $form['subject']; // mai - added
 		$email_msg = "";
 		$autoresponse_required = false;
@@ -1313,7 +1318,7 @@ function toggleVisOff(boxid)
 			{
 				$email_msg .= strtoupper(decode_html_entities($field['field_name'], ENT_QUOTES, get_option('blog_charset'))) . ": " . decode_html_entities($field['value'], ENT_QUOTES, get_option('blog_charset')) . "\r\n\r\n";
 				$field_values[$field['field_name']] = decode_html_entities($field['value'], ENT_QUOTES, get_option('blog_charset'));
-				// Populate ~variable~ tags in the form subject with values submitted by the user 
+				// Populate ~variable~ tags in the form subject with values submitted by the user
 				$email_sub = str_replace("~" . $field['field_name'] . "~", $field_values[$field['field_name']], $email_sub); // mai - added
 			}
 			elseif($field['field_type'] == "recipient selection")
@@ -1359,12 +1364,12 @@ function toggleVisOff(boxid)
 
 			if($response_details['from_email'] AND $response_details['subject'] AND $response_details['message'] AND $response_details['destination_email'])
 			{
-				if($response_details['from_name']) 
+				if($response_details['from_name'])
 					$response_details['from_email'] = '"' . $response_details['from_name'] . '"<' . $response_details['from_email'] . '>';
 			}
-			
+
 			// Populate ~variable~ tags in the autoresponse with values submitted by the user.
-			$txtAllFields = ""; 
+			$txtAllFields = "";
 			foreach($field_values as $key=>$value)
 			{
 				$response_details['subject'] = str_replace("~" . $key . "~", $value, $response_details['subject']);
@@ -1373,49 +1378,49 @@ function toggleVisOff(boxid)
 			}
 			$response_details['subject'] = str_replace("~FullForm~", trim($txtAllFields), $response_details['subject']);
 			$response_details['message'] = str_replace("~FullForm~", trim($txtAllFields), $response_details['message']);
-			
-			$result = formbuilder_send_email($response_details['destination_email'], 
-				decode_html_entities($response_details['subject'], ENT_QUOTES, get_option('blog_charset')), 
-				$response_details['message'], 
+
+			$result = formbuilder_send_email($response_details['destination_email'],
+				decode_html_entities($response_details['subject'], ENT_QUOTES, get_option('blog_charset')),
+				$response_details['message'],
 				"From: " . $response_details['from_email'] . "\nReply-To: " . $response_details['from_email'] . "\n");
 			if($result) die($result);
 		}
-		
+
 		// James' addition to ensure no hacking is allowed.
 		$email_sub = preg_replace('#[^a-z0-9_ -]#isU', '', $email_sub);
 
 		if(!$source_email) $source_email = get_option('admin_email');
-		
+
 		// Updated to force from address to use what is saved in settings.
 		$formBuilder_Default_from = formbuilder_get_default_from();
-		
+
 		// Allow for old style messaging.
 		if(strtoupper($formBuilder_Default_from) == '[SENDER_EMAIL]')
 			$formBuilder_Default_from = $source_email;
-				
+
 		return(formbuilder_send_email(
-			$form['recipient'], 
-			decode_html_entities($email_sub, ENT_QUOTES, get_option('blog_charset')), 
-			$email_msg, 
+			$form['recipient'],
+			decode_html_entities($email_sub, ENT_QUOTES, get_option('blog_charset')),
+			$email_msg,
 			"From: " . $formBuilder_Default_from . "\nReply-To: " . $source_email . "\n"));
 
 	}
-	
+
 	function formbuilder_get_default_from()
 	{
 		$from = get_option('formBuilder_Default_from');
-		
+
 		if(empty($from)) $from = "[SENDER_EMAIL]";
-		
+
 		return($from);
 	}
 
 	function formbuilder_set_default_from($from)
 	{
-		update_option('formBuilder_Default_from', $from);	
+		update_option('formBuilder_Default_from', $from);
 	}
-						
-						
+
+
 	// Function to send an email
 	function formbuilder_send_email($to, $subject, $message, $headers="")
 	{
@@ -1427,7 +1432,7 @@ function toggleVisOff(boxid)
 				'headers'	=> $headers,
 		);
 		$send_result = apply_filters('formbuilder_send_email', $send_data);
-		
+
 		// If a result is returned, we should not proceed with the
 		// built-in mailing process.
 		if($send_result == '1')
@@ -1442,10 +1447,10 @@ function toggleVisOff(boxid)
 		{
 			// Continue with normal sending functions.
 		}
-		
+
 		// Continue with normal sending.
 		$formBuilderTextStrings = formbuilder_load_strings();
-		
+
 		// Check to and subject for header injections
 		$badStrings = array("Content-Type:",
 		                     "MIME-Version:",
@@ -1464,7 +1469,7 @@ function toggleVisOff(boxid)
 		// If no errors are detected, send the message and return the response of the mail command.
 		if(!isset($error)) {
 			$headers = trim(trim($headers) . "\nContent-Type: text/plain; charset=\"" . get_option('blog_charset') . "\"\n");
-			
+
 			if(get_option('formbuilder_alternate_email_handling') != 'Enabled')
 			{
 				if(mail($to, $subject, $message, $headers))
@@ -1479,7 +1484,7 @@ function toggleVisOff(boxid)
 				else
 					return($formBuilderTextStrings['mail_error_alternate']);
 			}
-			
+
 		}
 		else
 		{
