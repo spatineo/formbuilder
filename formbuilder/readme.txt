@@ -3,7 +3,7 @@ Contributors: warkior
 Tags: form, forms, email, comments, contact, input, spam, form to email, email form, contact form
 Requires at least: 2.7
 Tested up to: 4.0.1
-Stable tag: 1.04
+Stable tag: 1.05
 
 Allows WordPress bloggers to easily create customised contact forms for use on pages or posts.
 
@@ -62,11 +62,14 @@ Programming and Design by [James Warkentin](http://www.warkior.com/)
 
 == Screenshots ==
 
-1. The administration screen on a new FormBuilder install. 
+1. The administration screen on a new FormBuilder install.
 2. Creating new forms.
 3. Adding new form fields.
 
 == Changelog ==
+
+= 1.05 =
+* Bug Fix: More bug fixing.
 
 = 1.04 =
 * Bug Fix: Silly bug fix.
@@ -86,7 +89,7 @@ Programming and Design by [James Warkentin](http://www.warkior.com/)
 * Ownership Change: TruthMedia will no longer be maintaining this plugin. Ongoing development will be handled by James Warkentin.
 * Better Email Handling: Switching forms to send from predefined email address, rather than from the visitor. This avoids many spam false positives and complies properly with new DMARK policy rules.
 WARNING! This update will change how the email FROM address is created. You may adjust the default on the settings page.
- 
+
 = 0.92 =
 * Cleanup: Cleaning up small bugs and deprecated code in more recent versions of WordPress.
 * Bug Fix: Switched referrer field to populate using JS rather than PHP to allow better functionality on cached sites.
@@ -173,20 +176,20 @@ WARNING! This update will change how the email FROM address is created. You may 
 = 0.825 (unstable) =
 * Feature: Better database export controls which should solve some of the timeout problems, as well as adding paginated form results and the ability to mass-delete database records.
 
-= 0.824 (unstable) = 
+= 0.824 (unstable) =
 * Overhaul: Complete overhaul of the javascript processing systems, replacing jQuery with a smaller, lighter library.
 
-= 0.823 (unstable) = 
+= 0.823 (unstable) =
 * Bug Fix: Major permissions problem prevented any FormBuilder access on upgrades and new installs.
 
-= 0.822 (unstable) = 
+= 0.822 (unstable) =
 * Feature: Spammer IP checking installed, checking IP's against http://www.stopforumspam.com/apis.
 * Feature: New field type: unique id.
 * Feature: New permissions system installed, allowing for form controls to be customized for certain user levels.
 * Bug Fix: URL validation was only partially working.
 * Bug Fix: Enabled better field name checking.
 
-= 0.821 (unstable) = 
+= 0.821 (unstable) =
 * Feature: Akismet spam checking.  Forms to be checked must have at least one 'name' required field and at least one 'email' required field.
 * Feature: New required field type: 'name'  Essentially the same as 'any text' but used specifically for the Akismet spam checking.
 
@@ -231,4 +234,3 @@ there may still be bugs.
 In the event that you DO experience any problems with this software, we would
 like to hear about it and will do our best to fix the problem.  You can let us
 know about bugs by commenting on [our blog](http://truthmedia.com/category/formbuilder/ "TruthMedia FormBuilder Blog")
-

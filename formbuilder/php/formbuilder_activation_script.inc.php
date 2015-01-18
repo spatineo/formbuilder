@@ -23,17 +23,17 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 	/**
 	 * Main FormBuilder Activation Function
-	 * 
+	 *
 	 * This script should run each time that the formbuilder is activated.
 	 * The upgrades should run from lowest to highest, each one upgrading
 	 * the one before until the current version is reached.
 	 */
 	function formbuilder_activation() {
-		
+
 		global $wpdb;
 		$error_status = FALSE;
 		$charset_collate = formbuilder_getCharSet();
-		
+
 		// Run this in the event that no previous or current version of formBuilder is installed.
 		if(get_option('formbuilder_version'))
 		{
@@ -583,7 +583,7 @@ CHANGE `from_name` `from_name` BLOB NOT NULL ';
 			// Upgrade to version 0.70
 			if(get_option('formbuilder_version') < 0.70)
 			{
-				formbuilder_admin_alert("Upgraded FormBuilder to 0.70", 
+				formbuilder_admin_alert("Upgraded FormBuilder to 0.70",
 					" - Feature: Added Alternate Action module to allow form submission to other form processing systems.<br/>" .
 					" - Feature: Uninstall feature added to FB Dashboard.<br/>" .
 					" - Tweak: Some code streamlining for faster response times.");
@@ -615,11 +615,11 @@ CHANGE `from_name` `from_name` BLOB NOT NULL ';
 				if($wpdb->query($sql) === false) {
 						$db_errors = "Unable to run query $sql<br/>\n";
 				}
-				
+
 				if(!$db_errors)
 				{
 					update_option('formbuilder_db_xml', '0');
-					formbuilder_admin_alert("Upgraded FormBuilder to 0.72", 
+					formbuilder_admin_alert("Upgraded FormBuilder to 0.72",
 							" - Feature: Enabled new field type CAPTCHA to allow for human form verification.<br/>" .
 							" - Feature: New forms are created with default contact fields.<br/>" .
 							" - Feature: Allow for form data to be saved to the database in addition to being processed by the form processing module.<br/>" .
@@ -633,7 +633,7 @@ CHANGE `from_name` `from_name` BLOB NOT NULL ';
 			// Upgrade to version 0.73
 			if(get_option('formbuilder_version') < 0.73)
 			{
-				formbuilder_admin_alert("Upgraded FormBuilder to 0.73", 
+				formbuilder_admin_alert("Upgraded FormBuilder to 0.73",
 					" - Bug Fix: Minor bug-fix to CAPTCHA functions which caused failure to work on some systems.");
 				update_option('formbuilder_version', "0.73");
 			}
@@ -641,7 +641,7 @@ CHANGE `from_name` `from_name` BLOB NOT NULL ';
 			// Upgrade to version 0.74
 			if(get_option('formbuilder_version') < 0.74)
 			{
-				formbuilder_admin_alert("Upgraded FormBuilder to 0.74", 
+				formbuilder_admin_alert("Upgraded FormBuilder to 0.74",
 					" - Feature: Enabled multi-page forms with the new 'page break' form field type.  Simply add a 'page break' where you want a new page of form fields to start.<br/>" .
 					" - Feature: Database form result saving and exporting enabled.  You can now view all forms that have come in to your site simply by viewing the database backup page.  You can also export a selection of results to a CSV file.");
 				update_option('formbuilder_version', "0.74");
@@ -650,7 +650,7 @@ CHANGE `from_name` `from_name` BLOB NOT NULL ';
 			// Upgrade to version 0.75
 			if(get_option('formbuilder_version') < 0.75)
 			{
-				formbuilder_admin_alert("Upgraded FormBuilder to 0.75", 
+				formbuilder_admin_alert("Upgraded FormBuilder to 0.75",
 					" - Feature: Enabled the ability to add a \"recipient selection\" field type.  <a href='http://truthmedia.com/wordpress/formbuilder/documentation/setting-a-selectable-form-recipient/'>more</a><br/>" .
 					" - Bug Fix: Minor bugs related to the export of CSV data.<br/>" .
 					" - Code Cleanup: Extensive code cleanup to better comply with STRICT PHP standards.");
@@ -660,9 +660,9 @@ CHANGE `from_name` `from_name` BLOB NOT NULL ';
 			// Upgrade to version 0.76
 			if(get_option('formbuilder_version') < 0.76)
 			{
-				formbuilder_admin_alert("Upgraded FormBuilder to 0.76", 
+				formbuilder_admin_alert("Upgraded FormBuilder to 0.76",
 					" - Feature: Added ability to capture IP address of form submitter.  Disabled by default.<br/>" .
-					" - Bug Fix: Minor HTML tweak to allow for better CSS compatability.<br/>" . 
+					" - Bug Fix: Minor HTML tweak to allow for better CSS compatability.<br/>" .
 					" - Code Cleanup: Cleaned up the FormBuilder management dashboard for better viewing and usability.");
 				update_option('formbuilder_version', "0.76");
 			}
@@ -670,14 +670,14 @@ CHANGE `from_name` `from_name` BLOB NOT NULL ';
 			// Upgrade to version 0.77
 			if(get_option('formbuilder_version') < 0.77)
 			{
-				formbuilder_admin_alert("Upgraded FormBuilder to version 0.77", 
+				formbuilder_admin_alert("Upgraded FormBuilder to version 0.77",
 					"Feature: Enabled Internationalization of the FormBuilder plugin.  This means that we will now be able to provide translators with a special POT file which can be used to create alternate language translations for the FormBuilder interface.<br/>" .
-					"Feature: Enabled exporting of results from a single form in more standardized CSV format.<br/>" . 
+					"Feature: Enabled exporting of results from a single form in more standardized CSV format.<br/>" .
 					"");
-					
+
 				update_option('formbuilder_version', "0.77");
 			}
-			
+
 			// Upgrade to version 0.80
 			if(get_option('formbuilder_version') < 0.80)
 			{
@@ -690,7 +690,7 @@ CHANGE `from_name` `from_name` BLOB NOT NULL ';
 				$sql[] = "ALTER TABLE `" . FORMBUILDER_TABLE_FORMS . "` CHANGE `subject` `subject` text NOT NULL;";
 				$sql[] = "ALTER TABLE `" . FORMBUILDER_TABLE_FORMS . "` CHANGE `recipient` `recipient` text NOT NULL;";
 				$sql[] = "ALTER TABLE `" . FORMBUILDER_TABLE_FORMS . "` CHANGE `thankyoutext` `thankyoutext` text NOT NULL;";
-				
+
 				$sql[] = "ALTER TABLE `" . FORMBUILDER_TABLE_FIELDS . "` CHANGE `field_type` `field_type` BLOB NOT NULL;";
 				$sql[] = "ALTER TABLE `" . FORMBUILDER_TABLE_FIELDS . "` CHANGE `field_name` `field_name` BLOB NOT NULL;";
 				$sql[] = "ALTER TABLE `" . FORMBUILDER_TABLE_FIELDS . "` CHANGE `required_data` `required_data` BLOB NOT NULL;";
@@ -701,12 +701,12 @@ CHANGE `from_name` `from_name` BLOB NOT NULL ';
 				$sql[] = "ALTER TABLE `" . FORMBUILDER_TABLE_FIELDS . "` CHANGE `field_value` `field_value` text NOT NULL;";
 				$sql[] = "ALTER TABLE `" . FORMBUILDER_TABLE_FIELDS . "` CHANGE `field_label` `field_label` text NOT NULL;";
 				$sql[] = "ALTER TABLE `" . FORMBUILDER_TABLE_FIELDS . "` CHANGE `error_message` `error_message` text NOT NULL;";
-				
+
 				$sql[] = "ALTER TABLE `" . FORMBUILDER_TABLE_PAGES . "` " . $charset_collate . ";";
-				
+
 				$sql[] = "ALTER TABLE `" . FORMBUILDER_TABLE_RESULTS . "` " . $charset_collate . ";";
 				$sql[] = "ALTER TABLE `" . FORMBUILDER_TABLE_RESULTS . "` CHANGE `xmldata` `xmldata` LONGTEXT NOT NULL;";
-				
+
 				$sql[] = "ALTER TABLE `" . FORMBUILDER_TABLE_RESPONSES . "` CHANGE `from_email` `from_email` BLOB NOT NULL;";
 				$sql[] = "ALTER TABLE `" . FORMBUILDER_TABLE_RESPONSES . "` " . $charset_collate . ";";
 				$sql[] = "ALTER TABLE `" . FORMBUILDER_TABLE_RESPONSES . "` CHANGE `from_email` `from_email` varchar(255) NOT NULL default '';";
@@ -714,13 +714,13 @@ CHANGE `from_name` `from_name` BLOB NOT NULL ';
 				$sql[] = "ALTER TABLE `" . FORMBUILDER_TABLE_RESPONSES . "` CHANGE `subject` `subject` text NOT NULL;";
 				$sql[] = "ALTER TABLE `" . FORMBUILDER_TABLE_RESPONSES . "` CHANGE `message` `message` text NOT NULL;";
 				$sql[] = "ALTER TABLE `" . FORMBUILDER_TABLE_RESPONSES . "` CHANGE `from_name` `from_name` varchar(255) NOT NULL default '';";
-				
+
 				$special_collate = "";
 				if ( ! empty($wpdb->charset) )
 					$special_collate = "CHARACTER SET $wpdb->charset";
 				if ( ! empty($wpdb->collate) )
 					$special_collate .= " COLLATE $wpdb->collate";
-				
+
 				$sql[] = "ALTER TABLE `" . FORMBUILDER_TABLE_FORMS . "` CHANGE `method` `method` ENUM( 'POST', 'GET' ) $special_collate NOT NULL DEFAULT 'POST'";
 				$sql[] = "ALTER TABLE `" . FORMBUILDER_TABLE_FORMS . "` CHANGE `autoresponse` `autoresponse` BIGINT( 20 ) NOT NULL DEFAULT '0'";
 				$sql[] = "ALTER TABLE `" . FORMBUILDER_TABLE_FIELDS . "` CHANGE `form_id` `form_id` BIGINT( 20 ) NOT NULL DEFAULT '0'";
@@ -728,7 +728,7 @@ CHANGE `from_name` `from_name` BLOB NOT NULL ';
 				$sql[] = "ALTER TABLE `" . FORMBUILDER_TABLE_PAGES . "` CHANGE `post_id` `post_id` BIGINT( 20 ) NOT NULL DEFAULT '0'";
 				$sql[] = "ALTER TABLE `" . FORMBUILDER_TABLE_PAGES . "` CHANGE `form_id` `form_id` BIGINT( 20 ) NOT NULL DEFAULT '0'";
 				$sql[] = "ALTER TABLE `" . FORMBUILDER_TABLE_RESULTS . "` CHANGE `form_id` `form_id` BIGINT( 20 ) UNSIGNED ZEROFILL NOT NULL DEFAULT '0'";
-				
+
 				foreach($sql as $query)
 				{
 					$result = $wpdb->query($query);
@@ -738,11 +738,11 @@ CHANGE `from_name` `from_name` BLOB NOT NULL ';
 						$error_status = true;
 					}
 				}
-			
+
 				update_option('formbuilder_alternate_email_handling', 'Disabled');
 				update_option('formbuilder_blacklist', 'Disabled');
-				
-				formbuilder_admin_alert("Upgraded FormBuilder to version 0.80", 
+
+				formbuilder_admin_alert("Upgraded FormBuilder to version 0.80",
 					"Feature: Alternate Email Processing - Allows you to select whether to use the standar PHP mail command (default) or the WordPress WP_Mail command.<br/>\n" .
 					"Feature: Form Data in AutoResponses - You can now make reference to submitted form data in autoresponses using variables like ~variable~ where the variable name matches the field names on your form.<br/>\n" .
 					"Feature: Blacklist Form Checking - You can enable checking of submitted form data against the WordPress discussion blacklist.  Set blacklisted items in the WordPress discussion settings.<br/>\n" .
@@ -750,52 +750,52 @@ CHANGE `from_name` `from_name` BLOB NOT NULL ';
 					"Feature: More Required Types - Added Link and Single Word the the required field types.<br/>\n" .
 					"Bug Fix: Attempted to fix link problems on windows hosting solutions.<br/>\n" .
 					"Bug Fix: Added Reply-To field to email headers.<br/>\n");
-					
+
 				update_option('formbuilder_version', "0.80");
 			}
-			
+
 			// Upgrade to version 0.81
 			if(get_option('formbuilder_version') < 0.81)
 			{
-				formbuilder_admin_alert("Upgraded FormBuilder to version 0.81", 
-					"Feature: Configured FB to automatically scroll back to the location of the form on the page when submitted.<br/>" . 
-					"Feature: Enabled ability to add Reset button to form if necessary.<br/>" . 
-					"Feature: Added page, referrer and optional IP to XML Email module, as well as XML database storage.<br/>" . 
-					"Feature: Enabled grey list checking based on moderation words found in the WordPress discussion options.<br/>" . 
-					"Feature: Excessive link checking based on link limits found in the WordPress discussion options.<br/>" . 
+				formbuilder_admin_alert("Upgraded FormBuilder to version 0.81",
+					"Feature: Configured FB to automatically scroll back to the location of the form on the page when submitted.<br/>" .
+					"Feature: Enabled ability to add Reset button to form if necessary.<br/>" .
+					"Feature: Added page, referrer and optional IP to XML Email module, as well as XML database storage.<br/>" .
+					"Feature: Enabled grey list checking based on moderation words found in the WordPress discussion options.<br/>" .
+					"Feature: Excessive link checking based on link limits found in the WordPress discussion options.<br/>" .
 					"Bug Fix: Allowed editors to export form results as CSV.<br/>\n" .
 					"Code Cleanup: Switch all code to use WordPress native database access model.<br/>" .
 					"");
-					
+
 				update_option('formbuilder_version', "0.81");
 			}
-			
+
 			// Upgrade to version 0.82
 			if(get_option('formbuilder_version') < 0.82)
 			{
-				formbuilder_admin_alert("Upgraded FormBuilder to version 0.82", 
-					"Feature: Added ability to export or delete specific forms from the XML backup database.<br/>" . 
-					"Feature: Added ability to translate specific front-end strings without translating the whole application.<br/>" . 
-					"Feature: Slight navigation and design reorganization for easier navigation.<br/>" . 
-					"Feature: Updated alternate_action with more robust code checking for curl library first.<br/>" . 
+				formbuilder_admin_alert("Upgraded FormBuilder to version 0.82",
+					"Feature: Added ability to export or delete specific forms from the XML backup database.<br/>" .
+					"Feature: Added ability to translate specific front-end strings without translating the whole application.<br/>" .
+					"Feature: Slight navigation and design reorganization for easier navigation.<br/>" .
+					"Feature: Updated alternate_action with more robust code checking for curl library first.<br/>" .
 					"Bug Fix: Fixed more Windows path related problems.<br/>\n" .
 					"Bug Fix: Enabled setting checkboxes, dropdowns and radio buttons as required fields.<br/>\n" .
 					"");
-					
+
 				update_option('formbuilder_version', "0.82");
 			}
-			
+
 			// Upgrade to version 0.821
 			if(get_option('formbuilder_version') < 0.821)
 			{
-				formbuilder_admin_alert("Upgraded FormBuilder to version 0.821", 
-					"Feature: Akismet spam checking.  Forms to be checked must have at least one 'name' required field and at least one 'email' required field.<br/>" . 
-					"Feature: New required field type: 'name'  Essentially the same as 'any text' but used specifically for the Akismet spam checking.<br/>" . 
+				formbuilder_admin_alert("Upgraded FormBuilder to version 0.821",
+					"Feature: Akismet spam checking.  Forms to be checked must have at least one 'name' required field and at least one 'email' required field.<br/>" .
+					"Feature: New required field type: 'name'  Essentially the same as 'any text' but used specifically for the Akismet spam checking.<br/>" .
 					"");
-					
+
 				update_option('formbuilder_version', "0.821");
 			}
-			
+
 			// Upgrade to version 0.822
 			if(get_option('formbuilder_version') < 0.822)
 			{
@@ -804,119 +804,119 @@ CHANGE `from_name` `from_name` BLOB NOT NULL ';
 					$referrer_info = 'Enabled';
 					update_option('formBuilder_referrer_info', $referrer_info);
 				}
-				
-				formbuilder_admin_alert("Upgraded FormBuilder to version 0.822", 
-					"Feature: Spammer IP checking installed, checking IP's against http://www.stopforumspam.com/apis.<br/>" . 
-					"Feature: New field type: unique id.<br/>" . 
-					"Feature: New permissions system installed, allowing for form controls to be customized for certain user levels.<br/>" . 
-					"Bug Fix: URL validation was only partially working.<br/>" . 
-					"Bug Fix: Enabled better field name checking.<br/>" . 
+
+				formbuilder_admin_alert("Upgraded FormBuilder to version 0.822",
+					"Feature: Spammer IP checking installed, checking IP's against http://www.stopforumspam.com/apis.<br/>" .
+					"Feature: New field type: unique id.<br/>" .
+					"Feature: New permissions system installed, allowing for form controls to be customized for certain user levels.<br/>" .
+					"Bug Fix: URL validation was only partially working.<br/>" .
+					"Bug Fix: Enabled better field name checking.<br/>" .
 				"");
-					
+
 				update_option('formbuilder_version', "0.822");
 			}
-			
+
 			// Upgrade to version 0.823
 			if(get_option('formbuilder_version') < 0.823)
 			{
-				formbuilder_admin_alert("Upgraded FormBuilder to version 0.823", 
-					"Bug Fix: Major permissions problem prevented any FormBuilder access on upgrades and new installs.<br/>" . 
+				formbuilder_admin_alert("Upgraded FormBuilder to version 0.823",
+					"Bug Fix: Major permissions problem prevented any FormBuilder access on upgrades and new installs.<br/>" .
 					"");
-					
+
 				update_option('formbuilder_version', "0.823");
 			}
-			
+
 			// Upgrade to version 0.824
 			if(get_option('formbuilder_version') < 0.824)
 			{
-				formbuilder_admin_alert("Upgraded FormBuilder to version 0.824", 
-					"Overhaul: Complete overhaul of the javascript processing systems, replacing jQuery with a smaller, lighter library.<br/>" . 
+				formbuilder_admin_alert("Upgraded FormBuilder to version 0.824",
+					"Overhaul: Complete overhaul of the javascript processing systems, replacing jQuery with a smaller, lighter library.<br/>" .
 					"");
-					
+
 				update_option('formbuilder_version', "0.824");
 			}
-			
+
 			// Upgrade to version 0.825
 			if(get_option('formbuilder_version') < 0.825)
 			{
-				formbuilder_admin_alert("Upgraded FormBuilder to version 0.825", 
-					"Feature: Better database export controls which should solve some of the timeout problems, as well as adding paginated form results and the ability to mass-delete database records.<br/>" . 
+				formbuilder_admin_alert("Upgraded FormBuilder to version 0.825",
+					"Feature: Better database export controls which should solve some of the timeout problems, as well as adding paginated form results and the ability to mass-delete database records.<br/>" .
 					"");
-					
+
 				update_option('formbuilder_version', "0.825");
 			}
-			
+
 			// Upgrade to version 0.83
 			if(get_option('formbuilder_version') < 0.83)
 			{
-				formbuilder_admin_alert("Upgraded FormBuilder to version 0.83",  
+				formbuilder_admin_alert("Upgraded FormBuilder to version 0.83",
 					"");
-					
+
 				update_option('formbuilder_version', "0.83");
 			}
-			
+
 			// Upgrade to version 0.84
 			if(get_option('formbuilder_version') < 0.84)
 			{
-				formbuilder_admin_alert("Upgraded FormBuilder to version 0.84",  
+				formbuilder_admin_alert("Upgraded FormBuilder to version 0.84",
 					"Feature: Enabled autodetection of forms to cut down on HTML bloat.<br/>\n" .
 					"Clean Up: Sorted field types and required field types alphabetically when editing forms.<br/>\n" .
 					"Bug Fix: Fixed CAPTCHA bug.<br/>\n" .
 					"Bug Fix: Removed requirement for field name on comments and page breaks.<br/>\n" .
 				"");
-					
+
 				update_option('formbuilder_version', "0.84");
 			}
-			
+
 			// Upgrade to version 0.85
 			if(get_option('formbuilder_version') < 0.85)
 			{
-				formbuilder_admin_alert("Upgraded FormBuilder to version 0.85",  
+				formbuilder_admin_alert("Upgraded FormBuilder to version 0.85",
 					"Feature: New SYSTEM FIELD type. Allows assigning variables to the form without having them displayed on the form itself.  Like hidden fields, but not shown even in the HTML code.<br/>\n" .
 					"Feature: Credit Card Required Field Type. Will do BASIC credit card number validation.  (ensures it looks like a valid CC number)<br/>\n" .
 					"Feature: Ability to resend emails from DB backup if necessary.<br/>\n" .
 					"Bug Fix: Small problem with session creation affecting confirmation email address checking.<br/>\n" .
 					"Bug Fix: Issue with improper error processing when unable to do spammer IP checking.<br/>\n" .
 				"");
-					
+
 				update_option('formbuilder_version', "0.85");
 			}
-			
+
 			// Upgrade to version 0.852
 			if(get_option('formbuilder_version') < 0.852)
 			{
-				formbuilder_admin_alert("Upgraded FormBuilder to version 0.852",  
+				formbuilder_admin_alert("Upgraded FormBuilder to version 0.852",
 					"Bug Fix: Upgrade alert fixed.<br/>\n" .
 					"Bug Fix: Small REQUEST_URI problem fixed.<br/>\n" .
 				"");
-					
+
 				update_option('formbuilder_version', "0.852");
 			}
-			
-			
+
+
 			// Upgrade to version 0.86
 			if(get_option('formbuilder_version') < 0.86)
 			{
 				if(get_option('formbuilder_extensions') === false)
 					update_option('formbuilder_extensions', array());
-				
-				formbuilder_admin_alert("Upgrading FormBuilder to version 0.86",  
+
+				formbuilder_admin_alert("Upgrading FormBuilder to version 0.86",
 					"Bug Fix: Fixed problem with DB_COLLATE and DB_CHARSET variables not being set.<br/>\n" .
 					"Clean Up: Changed post-to-form attachment box to list forms available alphabetically.<br/>\n" .
 					"Clean Up: New forms will now be named 'A New Form' so as to appear at the top of the forms list.<br/>\n" .
 					"Clean Up: Creating a new form will automatically load the form editor.<br/>\n" .
 				"");
-					
+
 				$installWasSuccessful = formbuilder_createTables();
-				
+
 				if($installWasSuccessful)
 				{
 					update_option('formbuilder_version', "0.86");
 				}
 				else
 				{
-	
-					formbuilder_admin_alert("ERRORS INSTALLING FORMBUILDER " . FORMBUILDER_VERSION_NUM, 
+
+					formbuilder_admin_alert("ERRORS INSTALLING FORMBUILDER " . FORMBUILDER_VERSION_NUM,
 						"FormBuilder seems to have encountered some errors while trying to install.  Please contact us on the FormBuilder help page at: <br/>
 						<a href='http://truthmedia.com/wordpress/formbuilder/request-help/' target='_blank'>http://truthmedia.com/wordpress/formbuilder/request-help/</a><br/><br/>
 						When contacting us, we will need to know the following information: <br/>
@@ -930,10 +930,10 @@ CHANGE `from_name` `from_name` BLOB NOT NULL ';
 						<li>The steps you took leading up to the problem</li>
 						</ul>
 						");
-					
+
 				}
 			}
-			
+
 			// Upgrade to version 0.87
 			if(get_option('formbuilder_version') < 0.87)
 			{
@@ -945,7 +945,7 @@ CHANGE `from_name` `from_name` BLOB NOT NULL ';
 					formbuilder_admin_alert("Failed running query: $sql");
 					$error_status = true;
 				}
-				
+
 				$sql = "CREATE TABLE IF NOT EXISTS `" . FORMBUILDER_TABLE_TAGS . "` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `form_id` bigint(20) NOT NULL,
@@ -959,24 +959,24 @@ CHANGE `from_name` `from_name` BLOB NOT NULL ';
 					formbuilder_admin_alert("Failed running query: $sql");
 					$error_status = true;
 				}
-				
-				formbuilder_admin_alert("Upgraded FormBuilder to version 0.87",  
+
+				formbuilder_admin_alert("Upgraded FormBuilder to version 0.87",
 					"Feature: New help text field added.<br/>\n" .
 					"Feature: Tags for forms.<br/>\n" .
 					"Feature: Paginated list of forms.<br/>\n" .
 					"Feature: Better internationalization support.<br/>\n" .
 					"Bug Fixing: Added more error information during the dreaded 'Form not saved' problem.<br/>\n" .
 				"");
-					
+
 				update_option('formbuilder_version', "0.87");
 			}
-			
-		
-			
+
+
+
 			// Upgrade to version 0.88
 			if(get_option('formbuilder_version') < 0.88)
 			{
-				formbuilder_admin_alert("Upgraded FormBuilder to version 0.88",  
+				formbuilder_admin_alert("Upgraded FormBuilder to version 0.88",
 					"Feature: Ability to search for forms.<br/>\n" .
 					"Feature: New field type: required checkbox.<br/>\n" .
 					"Feature: New field type: required password.<br/>\n" .
@@ -986,12 +986,12 @@ CHANGE `from_name` `from_name` BLOB NOT NULL ';
 					"Bug Fix: Datestamp field typo fixed.<br/>\n" .
 					"Bug Fix: Repaired problem with showing thankyou text after XML email sending.<br/>\n" .
 				"");
-					
+
 				update_option('formbuilder_version', "0.88");
 			}
-			
-		
-			
+
+
+
 			// Upgrade to version 0.89
 			if(get_option('formbuilder_version') < 0.89)
 			{
@@ -1006,36 +1006,36 @@ CHANGE `from_name` `from_name` BLOB NOT NULL ';
 * Bug Fix: Fixed forms not displaying / processing properly on some themes due to the_content being processed multiple times.
 * Bug Fix: Forms with followup_url fields now bounce straight to the followup url without re-showing the original page first.
 					"));
-					
+
 				update_option('formbuilder_version', "0.89");
 			}
-			
-		
-			
+
+
+
 			// Upgrade to version 0.891
 			if(get_option('formbuilder_version') < 0.891)
 			{
 				formbuilder_admin_alert("Upgraded FormBuilder to version 0.891", nl2br("
 * Bug Fix: Fixed warning that was appearing on pages.
 					"));
-					
+
 				update_option('formbuilder_version', "0.891");
 			}
-			
-		
-			
+
+
+
 			// Upgrade to version 0.892
 			if(get_option('formbuilder_version') < 0.892)
 			{
 				formbuilder_admin_alert("Upgraded FormBuilder to version 0.892", nl2br("
 * Bug Fix: Additional minor bug fixes
 					"));
-					
+
 				update_option('formbuilder_version', "0.892");
 			}
-			
-		
-			
+
+
+
 			// Upgrade to version 0.90
 			if(get_option('formbuilder_version') < 0.90)
 			{
@@ -1044,24 +1044,24 @@ CHANGE `from_name` `from_name` BLOB NOT NULL ';
 * Clean Up: Quite a few bug fixes and tidying changes generously contributed by outis in github.
 * Bug Fix: Allow showing of thankyou text when using modules.
 					"));
-					
+
 				update_option('formbuilder_version', "0.90");
 			}
-			
-		
-			
+
+
+
 			// Upgrade to version 0.91
 			if(get_option('formbuilder_version') < 0.91)
 			{
 				formbuilder_admin_alert("Upgraded FormBuilder to version 0.91", nl2br("
 * Security Fix: Resolved XSS vulnerability with the referer functionality.
 					"));
-					
+
 				update_option('formbuilder_version', "0.91");
 			}
-			
-		
-			
+
+
+
 			// Upgrade to version 0.92
 			if(get_option('formbuilder_version') < 0.92)
 			{
@@ -1069,12 +1069,12 @@ CHANGE `from_name` `from_name` BLOB NOT NULL ';
 * Cleanup: Cleaning up small bugs and deprecated code in more recent versions of WordPress.
 * Bug Fix: Switched referrer field to populate using JS rather than PHP, to allow better functionality on cached sites.
 					"));
-					
+
 				update_option('formbuilder_version', "0.92");
 			}
-			
-		
-			
+
+
+
 			// Upgrade to version 0.93
 			if(get_option('formbuilder_version') < 0.93)
 			{
@@ -1083,15 +1083,15 @@ CHANGE `from_name` `from_name` BLOB NOT NULL ';
 * Better Email Handling: Switching forms to send from predefined email address, rather than from the visitor. This avoids many spam false positives and complies properly with new DMARK policy rules.
 WARNING! This update will change how the email FROM address is created. You may adjust the default on the settings page.
 					"));
-				
+
 				// Updating db to use the shortcode to leave things functioning as they did before.
 				update_option('formBuilder_Default_from', '[SENDER_EMAIL]');
-				
+
 				update_option('formbuilder_version', "0.93");
 			}
-			
-		
-			
+
+
+
 			// Upgrade to version 1.00
 			if(get_option('formbuilder_version') < 1.00)
 			{
@@ -1101,7 +1101,7 @@ WARNING! This update will change how the email FROM address is created. You may 
 * Fixed or removed a number of links that connected to the old site.
 * Added some action hooks in preparation for future enhancements.
 					"));
-				
+
 				update_option('formbuilder_version', "1.00");
 			}
 
@@ -1152,44 +1152,53 @@ WARNING! This update will change how the email FROM address is created. You may 
 
 				update_option('formbuilder_version', "1.04");
 			}
-			
-			
-			
-			
-			
+
+			// Upgrade to version 1.05
+			if(get_option('formbuilder_version') < 1.05)
+			{
+				formbuilder_admin_alert("Upgraded FormBuilder to version 1.05", nl2br("
+* Bug fixing.
+					"));
+
+				update_option('formbuilder_version', "1.05");
+			}
+
+
+
+
 			/* For a future version
 			 */
 			// TODO: Marker.
-			
-			
+
+
 		}
 		else
 		{
-			
+
 			// Formbuilder was not previously installed, therefore install the required tables.
 			$installWasSuccessful = formbuilder_createTables();
-			
+
 			if($installWasSuccessful)
 			{
-			
+
 				if(!$error_status)
 				{
 					formbuilder_createOptions();
 				}
-				
+
 				// Set the version number
 				update_option('formbuilder_version', FORMBUILDER_VERSION_NUM);
-	
-				formbuilder_admin_alert("Finished Installing FormBuilder " . FORMBUILDER_VERSION_NUM, 
+
+				formbuilder_admin_alert("Finished Installing FormBuilder " . FORMBUILDER_VERSION_NUM,
 					"Thanks for installing FormBuilder.  We hope you like it.  Feel free to visit our blog " .
 					"if you have any comments or questions at " .
 					"<a href='http://truthmedia.com/wordpress/formbuilder/'>http://truthmedia.com/wordpress/formbuilder/</a>");
-			
+
 			}
 			else
 			{
 
-				formbuilder_admin_alert("ERRORS INSTALLING FORMBUILDER " . FORMBUILDER_VERSION_NUM, 
+				formbuilder_admin_alert("ERRORS INSTALLING FORMBUILDER " . FORMBUILDER_VERSION_NUM,
 					"FormBuilder seems to have encountered some errors while trying to install.  Please contact us on the FormBuilder help page at: <br/>
 					<a href='http://truthmedia.com/wordpress/formbuilder/request-help/' target='_blank'>http://truthmedia.com/wordpress/formbuilder/request-help/</a><br/><br/>
 					When contacting us, we will need to know the following information: <br/>
@@ -1203,12 +1212,12 @@ WARNING! This update will change how the email FROM address is created. You may 
 					<li>The steps you took leading up to the problem</li>
 					</ul>
 					");
-				
+
 			}
 		}
 	}
 
-	
+
 	/**
 	 * Create the string used to define MySQL charset and collation if necessary.
 	 */
@@ -1216,40 +1225,40 @@ WARNING! This update will change how the email FROM address is created. You may 
 	{
 		global $wpdb;
 		$charset_collate = '';
-		
+
 		if ( ! empty($wpdb->charset) )
 			$charset_collate = "DEFAULT CHARACTER SET $wpdb->charset";
 		if ( ! empty($wpdb->collate) )
 			$charset_collate .= " COLLATE $wpdb->collate";
 
 		// Determine database collation.
-		if ( $charset_collate == ''  
-			AND defined(DB_CHARSET) 
-			AND trim( DB_CHARSET ) != '' 
-		) 
+		if ( $charset_collate == ''
+			AND defined(DB_CHARSET)
+			AND trim( DB_CHARSET ) != ''
+		)
 		{
 			$charset_collate = "DEFAULT CHARACTER SET " . DB_CHARSET;
 			if ( defined(DB_COLLATE) AND trim( DB_COLLATE ) != '' )
 				$charset_collate .= " COLLATE " . DB_COLLATE;
 		}
-		
+
 		return($charset_collate);
 	}
-	
-	
+
+
 	/**
 	 * Contains the actual code for running the install.
 	 */
 	function formbuilder_createTables()
 	{
-			
+
 		global $wpdb;
 		$charset_collate = formbuilder_getCharSet();
-		
+
 			formbuilder_admin_alert('Creating necessary FormBuilder tables.', '');
-		
+
 			$error_status = false;
-			
+
 			// Run the table creation querys.
 			$sql = "CREATE TABLE IF NOT EXISTS `" . FORMBUILDER_TABLE_FIELDS . "` (
   `id` bigint(20) NOT NULL auto_increment,
@@ -1270,8 +1279,8 @@ WARNING! This update will change how the email FROM address is created. You may 
 				formbuilder_admin_alert("Failed running query: $sql");
 				$error_status = true;
 			}
-			
-			
+
+
 			$sql = "CREATE TABLE IF NOT EXISTS `" . FORMBUILDER_TABLE_FORMS . "` (
   `id` bigint(20) NOT NULL auto_increment,
   `name` varchar(255) NOT NULL default '',
@@ -1336,9 +1345,9 @@ WARNING! This update will change how the email FROM address is created. You may 
 				formbuilder_admin_alert("Failed running query: $sql");
 				$error_status = true;
 			}
-				
-			
-				
+
+
+
 				$sql = "CREATE TABLE IF NOT EXISTS `" . FORMBUILDER_TABLE_TAGS . "` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `form_id` bigint(20) NOT NULL,
@@ -1352,11 +1361,11 @@ WARNING! This update will change how the email FROM address is created. You may 
 				formbuilder_admin_alert("Failed running query: $sql");
 				$error_status = true;
 			}
-			
+
 			return(!$error_status);
 	}
-	
-	
+
+
 	/**
 	 * Function to create various wordpress option variables used by FormBuilder.
 	 */
@@ -1364,43 +1373,43 @@ WARNING! This update will change how the email FROM address is created. You may 
 	{
 		// Set the spam blocker default variable
 		update_option('formbuilder_spam_blocker', "formBuilderCap");
-	
+
 		// Set Custom CSS default variable
 		update_option('formBuilder_custom_css', 'Enabled');
-		
+
 		// Set default alternate email handling value to DisAbled
 		update_option('formbuilder_alternate_email_handling', 'Disabled');
-		
+
 		// Set blacklist checking to be disabled.
 		update_option('formbuilder_blacklist', 'Disabled');
-		
+
 		// Set blacklist checking to be disabled.
 		update_option('formbuilder_greylist', 'Disabled');
-		
+
 		// Set blacklist checking to be disabled.
 		update_option('formbuilder_excessive_links', 'Disabled');
-		
+
 		// Set blacklist checking to be disabled.
 		update_option('formbuilder_spammer_ip_checking', 'Disabled');
-		
+
 		// Set blacklist checking to be disabled.
 		update_option('formbuilder_akismet', 'Disabled');
-		
+
 		// Set referrer info to be collected by default.
 		update_option('formBuilder_referrer_info', 'Enabled');
-		
+
 		// Get the site domain and get rid of www.
 		$sitename = strtolower( $_SERVER['SERVER_NAME'] );
 		if ( substr( $sitename, 0, 4 ) == 'www.' ) {
 			$sitename = substr( $sitename, 4 );
 		}
-		
+
 		// Set the default from address to wordpress@sitename.com
 		$formBuilder_Default_from = 'wordpress@' . $sitename;
 		update_option('formBuilder_Default_from', $formBuilder_Default_from);
 	}
-	
-	
+
+
 	/**
 	 * This script should be run in the event that the user wants to remove all formbuilder related tables from the database.
 	 */
@@ -1440,16 +1449,16 @@ WARNING! This update will change how the email FROM address is created. You may 
 			delete_option('formBuilder_IP_Capture');
 			delete_option('formBuilder_javascript_compat');
 			delete_option('formbuilder_db_export_ids');
-			
-			
+
+
 
 			// Remove formbuilder tables
-			$sql = 'DROP TABLE `' . 
-				FORMBUILDER_TABLE_FIELDS . '`, `' . 
-				FORMBUILDER_TABLE_FORMS . '`, `' . 
-				FORMBUILDER_TABLE_PAGES . '`, `' . 
-				FORMBUILDER_TABLE_RESULTS . '`, `' . 
-				FORMBUILDER_TABLE_TAGS . '`, `' . 
+			$sql = 'DROP TABLE `' .
+				FORMBUILDER_TABLE_FIELDS . '`, `' .
+				FORMBUILDER_TABLE_FORMS . '`, `' .
+				FORMBUILDER_TABLE_PAGES . '`, `' .
+				FORMBUILDER_TABLE_RESULTS . '`, `' .
+				FORMBUILDER_TABLE_TAGS . '`, `' .
 				FORMBUILDER_TABLE_RESPONSES . '`;';
 			$wpdb->query($sql);
 			?>
